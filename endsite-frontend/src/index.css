@@ -1,0 +1,235 @@
+/* src/index.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #e9edf2;
+  color: #484e5a;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ── SKYPEOPLE typography ──────────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  color: #484e5a;
+}
+
+/* ── Form inputs ─────────────────────────────────────────────────────────── */
+
+.input-underline {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #484e5a;
+  outline: none;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  color: #484e5a;
+  transition: border-bottom-width 0.2s ease;
+}
+
+.input-underline:focus {
+  border-bottom: 2px solid #484e5a;
+}
+
+.input-underline::placeholder {
+  color: #949dae;
+  font-size: 14px;
+}
+
+.input-underline.error {
+  border-bottom: 1px solid #CC0000;
+}
+
+/* ── Labels ──────────────────────────────────────────────────────────────── */
+
+.input-label {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #949dae;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  background-color: #484e5a;
+  color: #fff;
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  opacity: 0.75;
+}
+
+.btn-primary:disabled {
+  background-color: #d2dae3;
+  color: #949dae;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #484e5a;
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  border: 1px solid #484e5a;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-outline:hover {
+  background-color: #484e5a;
+  color: #fff;
+}
+
+.btn-outline:disabled {
+  border-color: #d2dae3;
+  color: #949dae;
+  cursor: not-allowed;
+}
+
+/* ── Page transition ─────────────────────────────────────────────────────── */
+
+.page-enter {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Scroll reveal ───────────────────────────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Admin sidebar ───────────────────────────────────────────────────────── */
+
+.admin-nav-active {
+  border-left: 2px solid #fff;
+  background-color: rgba(255,255,255,0.05);
+}
+
+/* ── Status badges ───────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.badge-black  { background: #484e5a; color: #fff;    }
+.badge-grey   { background: #dde1e9; color: #949dae; }
+.badge-red    { border: 1px solid #CC0000; color: #CC0000; background: transparent; }
+.badge-green  { background: #484e5a; color: #fff;    }
+
+/* ── No scrollbar ────────────────────────────────────────────────────────── */
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Product grid ────────────────────────────────────────────────────────── */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Qty stepper ─────────────────────────────────────────────────────────── */
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #484e5a;
+}
+
+.qty-stepper button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  color: #484e5a;
+}
+
+.qty-stepper button:hover { background: #dde1e9; }
+.qty-stepper button:disabled { color: #949dae; cursor: not-allowed; }
+
+.qty-stepper span {
+  width: 40px;
+  text-align: center;
+  font-size: 14px;
+  border-left: 1px solid #484e5a;
+  border-right: 1px solid #484e5a;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #484e5a;
+}
