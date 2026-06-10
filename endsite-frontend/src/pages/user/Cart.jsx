@@ -8,16 +8,16 @@ import { useCart } from '../../context/CartContext'
 import LoginPromptModal from '../../components/LoginPromptModal'
 
 export default function Cart() {
-  const { isLoggedIn }                                    = useAuth()
+  const { isLoggedIn } = useAuth()
   const { cartItems, cartTotal, cartCount, updateQty,
-          removeItem, clearCart, loading }                = useCart()
-  const navigate                                          = useNavigate()
+    removeItem, clearCart, loading } = useCart()
+  const navigate = useNavigate()
 
-  const [modalOpen,    setModalOpen]    = useState(false)
-  const [updatingId,   setUpdatingId]   = useState(null)
-  const [removingId,   setRemovingId]   = useState(null)
-  const [clearing,     setClearing]     = useState(false)
-  const [itemErrors,   setItemErrors]   = useState({})
+  const [modalOpen, setModalOpen] = useState(false)
+  const [updatingId, setUpdatingId] = useState(null)
+  const [removingId, setRemovingId] = useState(null)
+  const [clearing, setClearing] = useState(false)
+  const [itemErrors, setItemErrors] = useState({})
 
   // ── Quantity update ────────────────────────────────────────────────────────
   const handleUpdateQty = async (item, newQty) => {
@@ -79,9 +79,9 @@ export default function Cart() {
     navigate('/checkout')
   }
 
-  const shippingThreshold  = 999
-  const shippingFee        = cartTotal >= shippingThreshold ? 0 : 99
-  const grandTotal         = cartTotal + shippingFee
+  const shippingThreshold = 999
+  const shippingFee = cartTotal >= shippingThreshold ? 0 : 99
+  const grandTotal = cartTotal + shippingFee
 
   // ── Loading skeleton ───────────────────────────────────────────────────────
   if (loading) {
@@ -129,8 +129,8 @@ export default function Cart() {
           <p className="text-font-size-16 leading-line-height-24 text-color-azure-32 mb-8 max-w-xs">
             Add items from the store grid to initialize your collection checkout ecosystem.
           </p>
-          <Link 
-            to="/products" 
+          <Link
+            to="/products"
             className="bg-color-black-solid text-color-white-solid uppercase tracking-wider text-[13px] py-4 px-8 font-font-weight-500 transition-opacity hover:opacity-80"
           >
             Browse Products
@@ -142,8 +142,8 @@ export default function Cart() {
 
   return (
     <>
-      <div className="w-full h-auto min-h-screen relative [background:#e9edf2] overflow-y-auto flex flex-col items-start pt-0 px-0 pb-[147.9px] box-border gap-[105.3px] leading-[normal] tracking-[normal] font-font-family-font-1 text-color-black-solid">
-        
+      <div className="min-h-screen bg-[#e9edf2] pt-24 pb-20 font-font-family-font-1 text-color-black-solid">
+
         {/* ── Header Wrapper ─────────────────────────────────────────────────── */}
         <header className="self-stretch bg-color-grey-93-2 flex items-end justify-between py-8 px-[42px] border-b border-solid border-color-azure-86 top-0 sticky z-[99]">
           <div>
@@ -174,10 +174,10 @@ export default function Cart() {
 
         {/* ── Main Layout Frame ──────────────────────────────────────────────── */}
         <div className="self-stretch flex flex-col lg:flex-row items-start py-0 px-[42px] gap-[42.6px] max-w-full shrink-0 box-border">
-          
+
           {/* ── Cart Items Column List ───────────────────────────────────────── */}
           <div className="w-full lg:w-[917.3px] flex flex-col items-start max-w-full">
-            
+
             {/* Column Desktop Headers */}
             <div className="hidden md:grid grid-cols-12 gap-4 w-full pb-3 border-b border-solid border-color-azure-86 text-left">
               <div className="col-span-6">
@@ -207,18 +207,17 @@ export default function Cart() {
               {cartItems.map((item) => {
                 const isUpdating = updatingId === item.variant_id
                 const isRemoving = removingId === item.variant_id
-                const itemError  = itemErrors[item.variant_id]
-                const itemTotal  = item.price * item.quantity
+                const itemError = itemErrors[item.variant_id]
+                const itemTotal = item.price * item.quantity
 
                 return (
                   <div
                     key={item.variant_id}
-                    className={`w-full py-6 transition-opacity duration-200 ${
-                      isRemoving ? 'opacity-40 pointer-events-none' : 'opacity-100'
-                    }`}
+                    className={`w-full py-6 transition-opacity duration-200 ${isRemoving ? 'opacity-40 pointer-events-none' : 'opacity-100'
+                      }`}
                   >
                     <div className="grid grid-cols-12 gap-4 items-start w-full">
-                      
+
                       {/* Image Frame component slot + specifications metadata */}
                       <div className="col-span-12 md:col-span-6 flex gap-4 text-left">
                         <Link to={`/products/${item.product_id}`} className="shrink-0">
@@ -293,9 +292,8 @@ export default function Cart() {
 
                       {/* Quantity control matrix frame */}
                       <div className="col-span-8 md:col-span-2 flex items-start justify-start md:justify-center pt-1">
-                        <div className={`flex items-center border border-solid border-color-azure-86 bg-color-white-solid rounded-[2.7px] transition-opacity ${
-                          isUpdating ? 'opacity-50' : 'opacity-100'
-                        }`}>
+                        <div className={`flex items-center border border-solid border-color-azure-86 bg-color-white-solid rounded-[2.7px] transition-opacity ${isUpdating ? 'opacity-50' : 'opacity-100'
+                          }`}>
                           <button
                             onClick={() => handleUpdateQty(item, item.quantity - 1)}
                             disabled={isUpdating || item.quantity <= 1}
@@ -360,7 +358,7 @@ export default function Cart() {
           {/* ── Checkout Calculations Block Panel ───────────────────────────── */}
           <div className="w-full lg:w-[458.7px] flex-1 max-w-full relative isolate">
             <div className="bg-color-white-solid border border-solid border-color-azure-86 p-6 sticky top-24 rounded-2xl flex flex-col items-start text-left">
-              
+
               <h2 className="m-0 text-[13px] uppercase tracking-letter-spacing-0-18 text-color-black-solid font-font-weight-500 mb-6 self-stretch border-b border-solid border-color-grey-93-2 pb-3">
                 ORDER SUMMARY
               </h2>

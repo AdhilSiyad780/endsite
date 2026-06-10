@@ -8,34 +8,21 @@ import { useCart } from '../context/CartContext'
 import api from '../api/axios'
 
 export default function ProductCard({ product, onWishlistPrompt }) {
-  const { isLoggedIn }  = useAuth()
-  const { addToCart }   = useCart()
+  const { isLoggedIn } = useAuth()
+  const [wishlisted, setWishlisted] = useState(false)
+  const [wishLoading, setWishLoading] = useState(false)
 
-  const [hovered,      setHovered]      = useState(false)
-  const [wishlisted,   setWishlisted]   = useState(false)
-  const [wishLoading,  setWishLoading]  = useState(false)
-  const [addingCart,   setAddingCart]   = useState(false)
-  const [cartSuccess,  setCartSuccess]  = useState(false)
-
-  const primaryImage   = product.primary_image   ?? null
+  const primaryImage = product.primary_image ?? null
   const secondaryImage = product.secondary_image ?? null
-  const hasSecondary   = !!secondaryImage
+  const hasSecondary = !!secondaryImage
 
   const displayPrice = product.min_price ?? product.base_price
   const isOutOfStock = product.is_in_stock === false
 
-
-  // ── Wishlist toggle ────────────────────────────────────────────────────────
-
   const handleWishlist = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-
-    if (!isLoggedIn) {
-      onWishlistPrompt?.()
-      return
-    }
-
+    if (!isLoggedIn) { onWishlistPrompt?.(); return }
     setWishLoading(true)
     try {
       if (wishlisted) {
@@ -45,167 +32,65 @@ export default function ProductCard({ product, onWishlistPrompt }) {
         await api.post('/wishlist', { product_id: product.product_id ?? product.id })
         setWishlisted(true)
       }
-    } catch (err) {
-      console.warn('[wishlist]', err.message)
-    } finally {
+    } catch { /* ignore */ } finally {
       setWishLoading(false)
     }
   }
 
-
-  // ── Quick add to cart (first available variant) ────────────────────────────
-
-  const handleQuickAdd = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (isOutOfStock) return
-
-    setAddingCart(true)
-    try {
-      // Navigate to product page for proper variant selection
-      // Quick-add only works if product has a single variant
-      // Otherwise we just show a visual cue and let the user go to the detail page
-      setCartSuccess(true)
-      setTimeout(() => setCartSuccess(false), 1500)
-    } catch (err) {
-      console.warn('[cart]', err.message)
-    } finally {
-      setAddingCart(false)
-    }
-  }
-
-
   return (
     <Link
       to={`/products/${product.product_id ?? product.id}`}
-      className="group block relative cursor-pointer"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="flex flex-col group relative"
     >
-
-      {/* ── Image container — 3:4 portrait ────────────────────────────────────── */}
-      <div className="relative w-full overflow-hidden bg-brand-grey-100"
-        style={{ aspectRatio: '3/4' }}>
-
-        {/* Primary image */}
+      <div className="aspect-[3/4] overflow-hidden bg-[#dde1e9] mb-4 relative rounded-sm">
         {primaryImage ? (
           <img
             src={primaryImage}
             alt={product.product_name ?? product.name}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300
-              ${hovered && hasSecondary ? 'opacity-0' : 'opacity-100'}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out-expo
+              ${hasSecondary ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
             loading="lazy"
             draggable={false}
           />
         ) : (
-          <div className="absolute inset-0 bg-brand-grey-200 flex items-center justify-center">
-            <span className="text-[11px] uppercase tracking-wider text-brand-grey-500">
-              No image
-            </span>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-[11px] uppercase tracking-widest text-[#949dae]">No image</span>
           </div>
         )}
 
-        {/* Secondary image — shown on hover */}
         {hasSecondary && (
           <img
             src={secondaryImage}
-            alt={`${product.product_name ?? product.name} alternate`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300
-              ${hovered ? 'opacity-100' : 'opacity-0'}`}
+            alt={product.product_name}
+            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out-expo"
             loading="lazy"
-            draggable={false}
           />
         )}
 
-        {/* ── Out of stock overlay ─────────────────────────────────────────── */}
         {isOutOfStock && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-            <span className="text-[11px] uppercase tracking-widest text-brand-grey-500">
-              Out of Stock
-            </span>
+          <div className="absolute inset-0 bg-white/40 flex items-center justify-center z-10">
+            <span className="text-[10px] uppercase tracking-[.2em] text-black bg-white px-3 py-1">Sold Out</span>
           </div>
         )}
 
-        {/* ── Wishlist button — top right, visible on hover ─────────────────── */}
+        {/* Wishlist Button */}
         <button
           onClick={handleWishlist}
           disabled={wishLoading}
-          className={`absolute top-3 right-3 w-8 h-8 bg-white flex items-center justify-center
-            transition-all duration-200 z-10
-            ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
-            ${wishLoading ? 'cursor-wait' : 'cursor-pointer hover:bg-brand-grey-100'}`}
-          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
         >
-          <Heart
-            size={14}
-            strokeWidth={1.5}
-            className={`transition-colors duration-200
-              ${wishlisted ? 'fill-black text-black' : 'text-brand-900'}`}
-          />
+          <Heart size={16} strokeWidth={1.5} className={wishlisted ? 'fill-black text-black' : 'text-black'} />
         </button>
-
-        {/* ── Cart success flash ────────────────────────────────────────────── */}
-        {cartSuccess && (
-          <div className="absolute bottom-3 left-3 right-3 bg-black text-white
-            text-[11px] uppercase tracking-wider text-center py-2 animate-fade-in">
-            Added to cart
-          </div>
-        )}
-
-        {/* ── Color swatches — bottom left on hover ────────────────────────── */}
-        {product.colors && product.colors.length > 0 && (
-          <div
-            className={`absolute bottom-3 left-3 flex gap-1.5 transition-all duration-200
-              ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
-          >
-            {product.colors.slice(0, 5).map((color) => (
-              <div
-                key={color}
-                title={color}
-                className="w-3.5 h-3.5 rounded-full border border-white/60"
-                style={{ backgroundColor: color?.toLowerCase() ?? '#ccc' }}
-              />
-            ))}
-            {product.colors.length > 5 && (
-              <span className="text-[10px] text-white/80 leading-none self-center">
-                +{product.colors.length - 5}
-              </span>
-            )}
-          </div>
-        )}
-
       </div>
 
-      {/* ── Product info ──────────────────────────────────────────────────────── */}
-      <div className="pt-3 pb-1">
-
-        {/* Category */}
-        {product.category_name && (
-          <p className="text-[10px] uppercase tracking-widest text-brand-grey-500 mb-1">
-            {product.category_name}
-          </p>
-        )}
-
-        {/* Name */}
-        <p className="text-product uppercase text-brand-900 leading-snug line-clamp-2">
+      <div className="flex flex-col gap-1 px-1">
+        <h3 className="text-[13px] font-medium text-black uppercase tracking-wide truncate">
           {product.product_name ?? product.name}
+        </h3>
+        <p className="text-[12px] text-[#949dae]">
+          ₹{displayPrice?.toLocaleString('en-IN')}
         </p>
-
-        {/* Price */}
-        <div className="flex items-center gap-2 mt-1.5">
-          <p className="text-price text-brand-900">
-            ₹{displayPrice.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
-          </p>
-          {isOutOfStock && (
-            <span className="text-[10px] uppercase tracking-wider text-brand-grey-500">
-              — Out of stock
-            </span>
-          )}
-        </div>
-
       </div>
-
     </Link>
   )
 }

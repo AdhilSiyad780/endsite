@@ -13,9 +13,9 @@ export default function Home() {
   const { isLoggedIn } = useAuth()
 
   const [featuredProducts, setFeaturedProducts] = useState([])
-  const [newArrivals,      setNewArrivals]       = useState([])
-  const [loading,          setLoading]           = useState(true)
-  const [modalOpen,        setModalOpen]         = useState(false)
+  const [newArrivals, setNewArrivals] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const revealRefs = useRef([])
 
@@ -67,24 +67,24 @@ export default function Home() {
 
         {/* ── HERO — full width image ────────────────────────────────────────── */}
         <section className="w-full overflow-hidden">
-  <div 
-    className="w-full bg-cover bg-center bg-no-repeat flex items-center justify-center relative"
-    style={{ 
-      minHeight: '80vh',
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url(${banner})`
-    }}
-  >
-    {/* Optional Overlay to make text readable if your image is bright */}
-    <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+          <div
+            className="w-full bg-cover bg-center bg-no-repeat flex items-center justify-center relative"
+            style={{
+              minHeight: '80vh',
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url(${banner})`
+            }}
+          >
+            {/* Optional Overlay to make text readable if your image is bright */}
+            <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
-    <div className="w-full h-full flex flex-col items-center justify-center text-center px-10 py-32 z-10">
-      
-      
-     
-     
-    </div>
-  </div>
-</section>
+            <div className="w-full h-full flex flex-col items-center justify-center text-center px-10 py-32 z-10">
+
+
+
+
+            </div>
+          </div>
+        </section>
 
 
         {/* ── POPULAR STYLES — exact SKYPEOPLE layout ────────────────────────── */}
@@ -262,68 +262,35 @@ export default function Home() {
 // ── SKYPEOPLE-style Product Card ───────────────────────────────────────────
 
 function ProductCard({ product, onWishlistPrompt }) {
-  const { isLoggedIn } = useAuth()
-  const [wishlisted,  setWishlisted]  = useState(false)
-  const [wishLoading, setWishLoading] = useState(false)
-
   const primaryImage = product.primary_image ?? null
-
-  const handleWishlist = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!isLoggedIn) { onWishlistPrompt?.(); return }
-    setWishLoading(true)
-    try {
-      const { default: api } = await import('../../api/axios')
-      if (wishlisted) {
-        await api.delete(`/wishlist/${product.product_id ?? product.id}`)
-        setWishlisted(false)
-      } else {
-        await api.post('/wishlist', { product_id: product.product_id ?? product.id })
-        setWishlisted(true)
-      }
-    } catch { /* ignore */ } finally {
-      setWishLoading(false)
-    }
-  }
 
   return (
     <Link
       to={`/products/${product.product_id ?? product.id}`}
-      className="flex flex-col items-center text-center group"
+      className="flex flex-col group"
     >
-      <div className="pt-[13.3px] pb-[21px]">
-        <div
-          className="relative overflow-hidden bg-[#dde1e9]"
-          style={{ width: '177.3px', height: '566.7px' }}
-        >
-          {primaryImage ? (
-            <img
-              src={primaryImage}
-              alt={product.product_name ?? product.name}
-              className="w-full h-full object-cover group-hover:opacity-80
-                transition-opacity duration-300"
-              draggable={false}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-[12px] text-[#949dae]">No image</span>
-            </div>
-          )}
-        </div>
+      <div className="aspect-[3/4] overflow-hidden bg-[#dde1e9] mb-6 relative">
+        {primaryImage ? (
+          <img
+            src={primaryImage}
+            alt={product.product_name ?? product.name}
+            className="w-full h-full object-cover group-hover:scale-105
+              transition-transform duration-700 ease-out-expo"
+            draggable={false}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-[12px] text-[#949dae] uppercase tracking-widest">No image</span>
+          </div>
+        )}
       </div>
 
-      <div className="w-[233.3px] flex flex-col items-center">
-        <p className="text-[16px] font-medium text-[#484e5a] leading-[24px]">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-[14px] font-normal text-black truncate uppercase tracking-wide">
           {product.product_name ?? product.name}
-        </p>
-      </div>
-
-      <div className="w-[233.3px] flex flex-col items-center">
-        <p className="text-[16px] font-medium text-[#484e5a] leading-[24px]">
-          ₹{(product.min_price ?? product.base_price)?.toLocaleString('en-IN', {
-            minimumFractionDigits: 0
-          })}
+        </h3>
+        <p className="text-[13px] text-[#949dae]">
+          ₹{(product.min_price ?? product.base_price)?.toLocaleString('en-IN')}
         </p>
       </div>
     </Link>

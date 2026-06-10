@@ -11,38 +11,38 @@ import ProductCard from '../../components/ProductCard'
 import LoginPromptModal from '../../components/LoginPromptModal'
 
 export default function ProductDetail() {
-  const { id }          = useParams()
-  const navigate         = useNavigate()
-  const { isLoggedIn }   = useAuth()
-  const { addToCart }    = useCart()
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { isLoggedIn } = useAuth()
+  const { addToCart } = useCart()
 
   // ── Product state ──────────────────────────────────────────────────────────
-  const [product,          setProduct]          = useState(null)
-  const [loading,          setLoading]          = useState(true)
-  const [error,            setError]            = useState('')
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   // ── Image gallery state ────────────────────────────────────────────────────
-  const [activeImage,      setActiveImage]      = useState(0)
-  const [imageZoomed,      setImageZoomed]      = useState(false)
+  const [activeImage, setActiveImage] = useState(0)
+  const [imageZoomed, setImageZoomed] = useState(false)
 
   // ── Variant state ──────────────────────────────────────────────────────────
-  const [selectedVariant,  setSelectedVariant]  = useState(null)
-  const [quantity,         setQuantity]         = useState(1)
+  const [selectedVariant, setSelectedVariant] = useState(null)
+  const [quantity, setQuantity] = useState(1)
 
   // ── Cart state ─────────────────────────────────────────────────────────────
-  const [addingCart,       setAddingCart]       = useState(false)
-  const [cartSuccess,      setCartSuccess]      = useState(false)
-  const [cartError,        setCartError]        = useState('')
+  const [addingCart, setAddingCart] = useState(false)
+  const [cartSuccess, setCartSuccess] = useState(false)
+  const [cartError, setCartError] = useState('')
 
   // ── Wishlist state ─────────────────────────────────────────────────────────
-  const [wishlisted,       setWishlisted]       = useState(false)
-  const [wishLoading,      setWishLoading]      = useState(false)
+  const [wishlisted, setWishlisted] = useState(false)
+  const [wishLoading, setWishLoading] = useState(false)
 
   // ── UI state ───────────────────────────────────────────────────────────────
-  const [modalOpen,        setModalOpen]        = useState(false)
-  const [modalFor,         setModalFor]         = useState('wishlist')
-  const [accordionOpen,    setAccordionOpen]    = useState({ details: true, shipping: false, returns: false })
-  const [relatedProducts,  setRelatedProducts]  = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalFor, setModalFor] = useState('wishlist')
+  const [accordionOpen, setAccordionOpen] = useState({ details: true, shipping: false, returns: false })
+  const [relatedProducts, setRelatedProducts] = useState([])
 
   const imageRef = useRef(null)
 
@@ -77,7 +77,7 @@ export default function ProductDetail() {
               params: { category: data.category_name }
             })
             setRelatedProducts(
-              related.filter((p) => p.id !== id).slice(0, 4)
+              related.filter((p) => (p.product_id ?? p.id) !== id).slice(0, 4)
             )
           } catch { /* ignore */ }
         }
@@ -157,7 +157,7 @@ export default function ProductDetail() {
       try {
         await navigator.share({
           title: product?.name,
-          url:   window.location.href,
+          url: window.location.href,
         })
       } catch { /* user cancelled */ }
     } else {
@@ -243,176 +243,94 @@ export default function ProductDetail() {
     )
   }
 
-  const images  = product.images  ?? []
+  const images = product.images ?? []
   const variants = product.variants ?? []
 
 
   return (
     <>
-      <div className="min-h-screen bg-white page-enter">
+      <div className="min-h-screen bg-[#e9edf2] pt-24 pb-20">
 
-        {/* ── Breadcrumb ───────────────────────────────────────────────────────── */}
-        <div className="max-w-content mx-auto px-10 py-4">
-          <nav className="flex items-center gap-2 text-[11px] uppercase tracking-wider">
-            <Link
-              to="/"
-              className="text-brand-grey-500 hover:text-brand-900 transition-colors"
-            >
-              Home
-            </Link>
-            <span className="text-brand-grey-200">/</span>
-            <Link
-              to="/products"
-              className="text-brand-grey-500 hover:text-brand-900 transition-colors"
-            >
-              Shop
-            </Link>
+        {/* Breadcrumb */}
+        <div className="px-10 py-6">
+          <nav className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#949dae]">
+            <Link to="/" className="hover:text-black transition-colors">Home</Link>
+            <span className="text-black/10">/</span>
+            <Link to="/products" className="hover:text-black transition-colors">Shop</Link>
             {product.category_name && (
               <>
-                <span className="text-brand-grey-200">/</span>
-                <Link
-                  to={`/products?category=${encodeURIComponent(product.category_name)}`}
-                  className="text-brand-grey-500 hover:text-brand-900 transition-colors"
-                >
-                  {product.category_name}
-                </Link>
+                <span className="text-black/10">/</span>
+                <span className="text-black">{product.category_name}</span>
               </>
             )}
-            <span className="text-brand-grey-200">/</span>
-            <span className="text-brand-900 truncate max-w-[200px]">
-              {product.name}
-            </span>
           </nav>
         </div>
 
+        <div className="max-w-[1920px] mx-auto px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
 
-        {/* ── Main product section ─────────────────────────────────────────────── */}
-        <div className="max-w-content mx-auto px-10 pb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-
-
-            {/* ── LEFT — Image gallery ─────────────────────────────────────────── */}
-            <div className="flex flex-col gap-3">
-
-              {/* Main image */}
-              <div
-                ref={imageRef}
-                className="relative w-full overflow-hidden bg-brand-grey-100 cursor-zoom-in"
-                style={{ aspectRatio: '3/4' }}
-                onClick={() => setImageZoomed((p) => !p)}
-              >
+            {/* Gallery */}
+            <div className="flex flex-col gap-6">
+              <div className="aspect-[3/4] overflow-hidden bg-[#dde1e9] relative rounded-sm">
                 {images.length > 0 ? (
                   <img
                     src={images[activeImage]?.image_url}
                     alt={product.name}
-                    className={`w-full h-full object-cover transition-transform duration-500
-                      ${imageZoomed ? 'scale-150' : 'scale-100'}`}
-                    draggable={false}
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-[11px] uppercase tracking-wider
-                      text-brand-grey-500">
-                      No image
-                    </span>
-                  </div>
-                )}
-
-                {/* Image count badge */}
-                {images.length > 1 && (
-                  <div className="absolute bottom-3 right-3 bg-black/60
-                    text-white text-[10px] uppercase tracking-wider px-2 py-1">
-                    {activeImage + 1} / {images.length}
+                  <div className="w-full h-full flex items-center justify-center uppercase tracking-widest text-[#949dae] text-[12px]">
+                    No imagery
                   </div>
                 )}
               </div>
 
-              {/* Thumbnail row */}
               {images.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                <div className="grid grid-cols-4 gap-4">
                   {images.map((img, idx) => (
                     <button
                       key={img.id}
                       onClick={() => setActiveImage(idx)}
-                      className={`flex-shrink-0 w-16 h-16 overflow-hidden
-                        border-2 transition-all duration-200
-                        ${activeImage === idx
-                          ? 'border-black'
-                          : 'border-transparent hover:border-brand-grey-200'
-                        }`}
+                      className={`aspect-[3/4] overflow-hidden bg-[#dde1e9] transition-all
+                        ${activeImage === idx ? 'opacity-100 ring-1 ring-black' : 'opacity-40 hover:opacity-100'}`}
                     >
-                      <img
-                        src={img.image_url}
-                        alt={`${product.name} ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                      />
+                      <img src={img.image_url} className="w-full h-full object-cover" alt="" />
                     </button>
                   ))}
                 </div>
               )}
-
             </div>
 
-
-            {/* ── RIGHT — Product info ─────────────────────────────────────────── */}
-            <div className="flex flex-col gap-6 md:pt-4">
-
-              {/* Category + actions row */}
-              <div className="flex items-center justify-between">
-                {product.category_name && (
-                  <Link
-                    to={`/products?category=${encodeURIComponent(product.category_name)}`}
-                    className="text-[11px] uppercase tracking-widest
-                      text-brand-grey-500 hover:text-brand-900 transition-colors"
-                  >
-                    {product.category_name}
-                  </Link>
-                )}
-                <div className="flex items-center gap-3 ml-auto">
-                  <button
-                    onClick={handleShare}
-                    className="text-brand-grey-500 hover:text-brand-900
-                      transition-colors"
-                    aria-label="Share"
-                  >
-                    <Share2 size={18} strokeWidth={1.5} />
-                  </button>
-                </div>
+            {/* Info */}
+            <div className="flex flex-col max-w-lg">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[12px] font-bold uppercase tracking-[.3em] text-[#949dae]">
+                  {product.category_name || 'Technical Equipment'}
+                </span>
+                <button onClick={handleShare} className="text-[#949dae] hover:text-black transition-colors">
+                  <Share2 size={18} strokeWidth={1} />
+                </button>
               </div>
 
-              {/* Product name */}
-              <h1 className="text-2xl md:text-3xl font-light tracking-wider
-                uppercase text-brand-900 leading-tight">
+              <h1 className="text-[42px] font-normal text-black uppercase tracking-tight leading-none mb-6">
                 {product.name}
               </h1>
 
-              {/* Price */}
-              <div className="flex items-baseline gap-3">
-                <p className="text-2xl font-light text-brand-900">
-                  ₹{displayPrice.toLocaleString('en-IN', {
-                    minimumFractionDigits: 0
-                  })}
+              <div className="flex items-center gap-6 mb-12">
+                <p className="text-[24px] font-normal text-black">
+                  ₹{displayPrice.toLocaleString('en-IN')}
                 </p>
-                {selectedVariant?.price_override &&
-                  selectedVariant.price_override !== product.base_price && (
-                  <p className="text-[13px] text-brand-grey-500 line-through">
-                    ₹{product.base_price.toLocaleString('en-IN', {
-                      minimumFractionDigits: 0
-                    })}
+                {selectedVariant?.price_override && selectedVariant.price_override !== product.base_price && (
+                  <p className="text-[16px] text-[#949dae] line-through">
+                    ₹{product.base_price.toLocaleString('en-IN')}
                   </p>
                 )}
-                <span className="text-[11px] uppercase tracking-wider
-                  text-brand-grey-500">
-                  incl. taxes
-                </span>
               </div>
 
-              {/* Divider */}
-              <div className="h-px bg-brand-grey-200" />
+              <div className="h-[1px] bg-black/10 w-full mb-12" />
 
-              {/* Variant selector */}
-              {variants.length > 0 ? (
+              {/* Variants */}
+              <div className="mb-12">
                 <VariantSelector
                   variants={variants}
                   onSelect={(v) => {
@@ -422,225 +340,101 @@ export default function ProductDetail() {
                     setCartSuccess(false)
                   }}
                 />
-              ) : (
-                <p className="text-[12px] uppercase tracking-wider
-                  text-brand-grey-500">
-                  No variants available
-                </p>
-              )}
+              </div>
 
-              {/* Divider */}
-              <div className="h-px bg-brand-grey-200" />
-
-              {/* Quantity selector */}
+              {/* Quantity */}
               {selectedVariant && selectedVariant.stock > 0 && (
-                <div>
-                  <label className="input-label mb-3 block">Quantity</label>
-                  <div className="qty-stepper inline-flex">
-                    <button
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      disabled={quantity <= 1}
-                    >
-                      <Minus size={14} strokeWidth={1.5} />
+                <div className="mb-12">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#949dae] block mb-4">Quantity</span>
+                  <div className="flex items-center border border-black/10 w-fit px-4 py-2 gap-8 bg-white/50">
+                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={quantity <= 1} className="hover:opacity-40 transition-opacity">
+                      <Minus size={14} />
                     </button>
-                    <span>{quantity}</span>
-                    <button
-                      onClick={() =>
-                        setQuantity((q) =>
-                          Math.min(selectedVariant.stock, q + 1)
-                        )
-                      }
-                      disabled={quantity >= selectedVariant.stock}
-                    >
-                      <Plus size={14} strokeWidth={1.5} />
+                    <span className="text-[14px] font-bold min-w-[20px] text-center">{quantity}</span>
+                    <button onClick={() => setQuantity(q => Math.min(selectedVariant.stock, q + 1))} disabled={quantity >= selectedVariant.stock} className="hover:opacity-40 transition-opacity">
+                      <Plus size={14} />
                     </button>
                   </div>
-                  {selectedVariant.stock <= 5 && (
-                    <p className="text-[11px] text-red-600 uppercase
-                      tracking-wider mt-2">
-                      Only {selectedVariant.stock} left in stock
-                    </p>
-                  )}
                 </div>
               )}
 
-              {/* Cart error / success */}
-              {cartError && (
-                <p className="text-[12px] text-red-600 uppercase tracking-wider">
-                  {cartError}
-                </p>
-              )}
-              {cartSuccess && (
-                <div className="px-4 py-3 bg-black text-white text-[12px]
-                  uppercase tracking-wider text-center animate-fade-in">
-                  Added to cart ✓
-                </div>
-              )}
+              {/* Actions */}
+              <div className="flex flex-col gap-4 mb-20">
+                {cartError && <p className="text-[12px] text-red-500 uppercase tracking-widest mb-2 font-semibold">{cartError}</p>}
 
-              {/* Add to cart button */}
-              <button
-                onClick={handleAddToCart}
-                disabled={
-                  addingCart ||
-                  !selectedVariant ||
-                  selectedVariant?.stock <= 0
-                }
-                className="btn-primary w-full flex items-center justify-center
-                  gap-2 py-4 text-[13px]"
-              >
-                {addingCart ? (
-                  <>
-                    <div className="w-4 h-4 border border-white
-                      border-t-transparent rounded-full animate-spin" />
-                    Adding...
-                  </>
-                ) : !selectedVariant ? (
-                  'Select a Variant'
-                ) : selectedVariant.stock <= 0 ? (
-                  'Out of Stock'
-                ) : (
-                  'Add to Cart'
+                <button
+                  onClick={handleAddToCart}
+                  disabled={addingCart || !selectedVariant || selectedVariant?.stock <= 0}
+                  className="w-full py-5 bg-black text-white uppercase text-[12px] font-bold tracking-[.4em] hover:bg-[#222] transition-colors disabled:bg-[#dde1e9] disabled:text-[#949dae]"
+                >
+                  {addingCart ? 'Processing...' : !selectedVariant ? 'Select Size' : selectedVariant.stock <= 0 ? 'Sold Out' : 'Add to Bag'}
+                </button>
+
+                <button
+                  onClick={handleWishlist}
+                  disabled={wishLoading}
+                  className={`w-full py-5 border border-black uppercase text-[12px] font-bold tracking-[.4em] transition-all
+                    ${wishlisted ? 'bg-black text-white' : 'hover:bg-black hover:text-white'}`}
+                >
+                  {wishLoading ? 'Loading...' : wishlisted ? 'Saved' : 'Save to Wishlist'}
+                </button>
+
+                {cartSuccess && (
+                  <p className="text-center text-[11px] font-bold uppercase tracking-widest text-black mt-2 animate-bounce">
+                    ✓ Item added to bag
+                  </p>
                 )}
-              </button>
+              </div>
 
-              {/* Wishlist button */}
-              <button
-                onClick={handleWishlist}
-                disabled={wishLoading}
-                className={`btn-outline w-full flex items-center justify-center
-                  gap-2 py-4 text-[13px] transition-all duration-200
-                  ${wishlisted
-                    ? 'bg-black text-white border-black'
-                    : ''
-                  }`}
-              >
-                <Heart
-                  size={16}
-                  strokeWidth={1.5}
-                  className={wishlisted ? 'fill-white' : ''}
-                />
-                {wishLoading
-                  ? 'Updating...'
-                  : wishlisted
-                    ? 'Wishlisted'
-                    : 'Add to Wishlist'
-                }
-              </button>
-
-
-              {/* ── Accordion — details, shipping, returns ─────────────────────── */}
-              <div className="flex flex-col border-t border-brand-grey-200 mt-2">
-
+              {/* Accordion */}
+              <div className="border-t border-black/10">
                 {[
-                  {
-                    key:     'details',
-                    label:   'Product Details',
-                    content: product.description
-                      ?? 'No description available.',
-                  },
-                  {
-                    key:   'shipping',
-                    label: 'Shipping & Delivery',
-                    content:
-                      'Free shipping on orders above ₹999. Standard delivery in 3–7 business days. Express delivery available at checkout.',
-                  },
-                  {
-                    key:   'returns',
-                    label: 'Returns & Exchanges',
-                    content:
-                      '7-day hassle-free returns. Items must be unworn, unwashed, and in original packaging. Exchanges subject to stock availability.',
-                  },
+                  { key: 'details', label: 'Description', content: product.description },
+                  { key: 'shipping', label: 'Shipping', content: 'Free shipping on all technical equipment orders over ₹5,000.' },
+                  { key: 'returns', label: 'Returns', content: 'Hassle-free 30-day returns for unused items in original packaging.' }
                 ].map(({ key, label, content }) => (
-                  <div
-                    key={key}
-                    className="border-b border-brand-grey-200"
-                  >
+                  <div key={key} className="border-b border-black/10">
                     <button
                       onClick={() => toggleAccordion(key)}
-                      className="w-full flex items-center justify-between
-                        py-4 text-left group"
+                      className="w-full py-6 flex justify-between items-center text-[12px] font-bold uppercase tracking-widest hover:opacity-60 transition-opacity"
                     >
-                      <span className="text-[12px] uppercase tracking-wider
-                        text-brand-900 group-hover:opacity-60 transition-opacity">
-                        {label}
-                      </span>
-                      <ChevronDown
-                        size={14}
-                        strokeWidth={1.5}
-                        className={`text-brand-grey-500 transition-transform duration-200
-                          ${accordionOpen[key] ? 'rotate-180' : ''}`}
-                      />
+                      {label}
+                      <ChevronDown size={14} className={`transition-transform duration-500 ${accordionOpen[key] ? 'rotate-180' : ''}`} />
                     </button>
                     {accordionOpen[key] && (
-                      <div className="pb-4 animate-fade-in">
-                        <p className="text-[13px] text-brand-grey-500
-                          leading-relaxed">
-                          {content}
-                        </p>
+                      <div className="pb-8 text-[14px] leading-relaxed text-[#484e5a] max-w-sm animate-fade-in">
+                        {content}
                       </div>
                     )}
                   </div>
                 ))}
-
               </div>
-
             </div>
-
           </div>
         </div>
 
-
-        {/* ── Related products ─────────────────────────────────────────────────── */}
+        {/* Related */}
         {relatedProducts.length > 0 && (
-          <section className="border-t border-brand-grey-200 py-20
-            bg-brand-grey-100">
-            <div className="max-w-content mx-auto px-10">
-
-              <div className="flex items-center justify-between mb-10">
-                <div>
-                  <p className="text-[11px] uppercase tracking-widest
-                    text-brand-grey-500 mb-2">
-                    You may also like
-                  </p>
-                  <h2 className="text-2xl font-light tracking-wider
-                    uppercase text-brand-900">
-                    Related
-                  </h2>
-                </div>
-                <Link
-                  to={`/products?category=${encodeURIComponent(product.category_name ?? '')}`}
-                  className="hidden md:inline-flex items-center gap-2
-                    text-[12px] uppercase tracking-wider text-brand-grey-500
-                    hover:text-brand-900 transition-colors"
-                >
-                  View all
-                </Link>
+          <section className="mt-40 border-t border-black/5 pt-24">
+            <div className="px-10 max-w-[1920px] mx-auto">
+              <div className="flex flex-col items-center mb-20 text-center">
+                <span className="text-[12px] font-semibold tracking-[.3em] uppercase text-[#949dae] mb-4">Complete the Look</span>
+                <h2 className="text-[28px] font-normal text-black tracking-wide uppercase">You May Also Like</h2>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {relatedProducts.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onWishlistPrompt={() => {
-                      setModalFor('wishlist')
-                      setModalOpen(true)
-                    }}
-                  />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                {relatedProducts.map(p => (
+                  <ProductCard key={p.product_id ?? p.id} product={p} onWishlistPrompt={() => setModalOpen(true)} />
                 ))}
               </div>
-
             </div>
           </section>
         )}
-
       </div>
 
-      {/* ── Login prompt modal ───────────────────────────────────────────────── */}
       <LoginPromptModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        redirectTo={modalFor === 'checkout' ? '/checkout' : '/wishlist'}
+        redirectTo={`/products/${id}`}
       />
     </>
   )

@@ -7,9 +7,9 @@ import { useCart } from '../context/CartContext'
 import { ShoppingBag, Heart, User, Menu, X, LogOut, Package, LayoutDashboard } from 'lucide-react'
 
 const NAV_LINKS = [
-  { label: 'About Us',          to: '/about' },
+  { label: 'About Us', to: '/about' },
   { label: 'Science of Warmth', to: '/science' },
-  { label: 'Store',             to: '/products' },
+  { label: 'Store', to: '/products' },
 ]
 
 export default function Navbar() {
@@ -17,7 +17,7 @@ export default function Navbar() {
   const { cartCount } = useCart()
   const navigate = useNavigate()
 
-  const [drawerOpen,  setDrawerOpen]  = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
 
@@ -67,201 +67,106 @@ export default function Navbar() {
   }, [])
 
   const handleSignOut = async () => {
-  setProfileOpen(false)
-  setDrawerOpen(false)
-  try {
-    await signOut()
-  } catch (err) {
-    console.warn('[navbar] signOut error:', err.message)
-  } finally {
-    navigate('/')   // always navigate, regardless of whether signOut threw
+    setProfileOpen(false)
+    setDrawerOpen(false)
+    try {
+      await signOut()
+    } catch (err) {
+      console.warn('[navbar] signOut error:', err.message)
+    } finally {
+      navigate('/')   // always navigate, regardless of whether signOut threw
+    }
   }
-}
 
   return (
     <>
       {/* ── Navbar Container with custom luxury easing curves ────────────────── */}
-      <header 
+      <header
         className="sticky top-0 z-50 bg-[#e9edf2] border-b border-[#d2dae3] will-change-transform"
         style={{
           transform: isVisible ? 'translateY(0)' : 'translateY(-101%)',
           transition: 'transform 450ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <div className="max-w-[1920px] mx-auto px-10 py-4 flex items-center justify-between">
+        <div className="max-w-[1920px] mx-auto px-10 py-6 flex items-center">
 
-          {/* Left Block: Spherical Logo Icon Graphic Element */}
-          <Link to="/" className="flex items-center shrink-0 group">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-700 via-blue-400 to-sky-200 shadow-inner flex items-center justify-center relative overflow-hidden border border-blue-900/20 transition-transform duration-300 group-hover:scale-105">
-              <div className="absolute inset-1.5 rounded-full bg-radial from-transparent to-black/20 pointer-events-none" />
-              <div className="w-3 h-7 border-2 border-white/70 rounded-full opacity-60 transform rotate-12 relative">
-                <span className="absolute top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full" />
+          {/* ── Left Block: Logo & Nav ────────────────────────────────────────── */}
+          <div className="flex items-center gap-14 flex-1">
+            <Link to="/" className="flex items-center shrink-0 group">
+              <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <div className="w-2 h-5 border border-white/40 rounded-full" />
               </div>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-10 ml-14 mr-auto">
-            {NAV_LINKS.map(({ label, to }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  `text-[14px] font-semibold text-black tracking-wide border-black transition-all duration-200 relative py-1
-                  after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-black after:transition-transform after:duration-300
-                  ${isActive ? 'after:scale-x-100 opacity-100' : 'after:scale-x-0 opacity-70 hover:opacity-100'}`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
-            {isAdmin && (
-              <NavLink
-                to="/admin"
-                className="text-[14px] font-semibold text-black opacity-70 hover:opacity-100 transition-opacity"
-              >
-                Admin
-              </NavLink>
-            )}
-          </nav>
-
-          {/* Center-Right Branding Layer */}
-          <div className="hidden lg:block select-none pointer-events-none mx-10">
-            <h1 className="text-[52px] font-black tracking-tighter text-black leading-none uppercase">
-              ENDSITE
-            </h1>
-          </div>
-
-          {/* Right Action Controls */}
-          <div className="flex items-center gap-5 shrink-0">
-
-            {/* Cart Icon */}
-            <Link
-              to="/cart"
-              className="relative text-black hover:opacity-70 transition-opacity p-1"
-              aria-label="Cart"
-            >
-              <ShoppingBag size={22} strokeWidth={1.5} />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4
-                  bg-black text-white text-[9px] font-medium
-                  flex items-center justify-center rounded-full scale-100 animate-[bounce_1s_infinite_1]">
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
-              )}
             </Link>
 
-            {/* Wishlist Icon */}
-            {isLoggedIn && (
-              <Link
-                to="/wishlist"
-                className="hidden md:block text-black hover:opacity-70 transition-opacity p-1"
-                aria-label="Wishlist"
-              >
-                <Heart size={22} strokeWidth={1.5} />
-              </Link>
-            )}
-
-            {/* Profile Dropdown Actions */}
-            {isLoggedIn ? (
-              <div className="relative hidden md:block" ref={profileRef}>
-                <button
-                  onClick={() => setProfileOpen((p) => !p)}
-                  className="text-black hover:opacity-70 transition-opacity p-1"
+            <nav className="hidden md:flex items-center gap-10">
+              {NAV_LINKS.map(({ label, to }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    `text-[14px] font-normal text-black tracking-wide transition-opacity duration-200 py-1
+                    ${isActive ? 'opacity-100 border-b border-black' : 'opacity-60 hover:opacity-100'}`
+                  }
                 >
-                  <User size={22} strokeWidth={1.5} />
-                </button>
+                  {label}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
 
-                {profileOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-[200px]
-                    bg-[#e9edf2] border border-[#d2dae3] z-50 shadow-xl rounded-sm overflow-hidden transform origin-top-right transition-all duration-200 animate-[fadeIn_0.15s_ease-out]">
+          {/* ── Right Block: Brand & Actions ──────────────────────────────────── */}
+          <div className="flex items-center gap-10">
 
-                    <div className="px-4 py-3 bg-[#dde1e9]/50 border-b border-[#d2dae3]">
-                      <p className="text-[14px] font-semibold text-black truncate">
-                        {profile?.full_name ?? 'Account'}
-                      </p>
-                      <p className="text-[12px] text-[#949dae] mt-0.5">
-                        {isAdmin ? 'Administrator' : 'Member'}
-                      </p>
-                    </div>
+            {/* Branding Text */}
+            <div className="hidden lg:block select-none">
+              <h1 className="text-[28px] font-black tracking-tighter text-black leading-none uppercase">
+                ENDSITE
+              </h1>
+            </div>
 
-                    <div className="py-1">
-                      {isAdmin && (
-                        <Link
-                          to="/admin"
-                          onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5
-                            text-[14px] text-black hover:bg-[#dde1e9]
-                            transition-colors"
-                        >
-                          <LayoutDashboard size={14} strokeWidth={1.5} />
-                          Dashboard
-                        </Link>
-                      )}
-                      <Link
-                        to="/profile"
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5
-                          text-[14px] text-black hover:bg-[#dde1e9]
-                          transition-colors"
-                      >
-                        <User size={14} strokeWidth={1.5} />
-                        Profile
-                      </Link>
-                      <Link
-                        to="/orders"
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5
-                          text-[14px] text-black hover:bg-[#dde1e9]
-                          transition-colors"
-                      >
-                        <Package size={14} strokeWidth={1.5} />
-                        Orders
-                      </Link>
-                      <Link
-                        to="/wishlist"
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5
-                          text-[14px] text-black hover:bg-[#dde1e9]
-                          transition-colors"
-                      >
-                        <Heart size={14} strokeWidth={1.5} />
-                        Wishlist
-                      </Link>
-                    </div>
-
-                    <div className="border-t border-[#d2dae3] py-1">
-                      <button
-                        onClick={handleSignOut}
-                        className="flex items-center gap-2.5 px-4 py-2.5 w-full
-                          text-[14px] text-gray-500 hover:text-black
-                          hover:bg-[#dde1e9] transition-colors"
-                      >
-                        <LogOut size={14} strokeWidth={1.5} />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
+            <div className="flex items-center gap-6">
+              {/* Cart */}
+              <Link to="/cart" className="relative text-black hover:opacity-60 transition-opacity">
+                <ShoppingBag size={20} strokeWidth={1.5} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white text-[9px] flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
                 )}
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="hidden md:flex items-center gap-1.5
-                  text-black hover:opacity-70 transition-opacity"
-              >
-                <User size={22} strokeWidth={1.5} />
               </Link>
-            )}
 
-            {/* Mobile Hamburger Menu */}
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="md:hidden text-black hover:opacity-70 transition-opacity p-1"
-            >
-              <Menu size={24} strokeWidth={1.5} />
-            </button>
+              {/* Wishlist */}
+              {isLoggedIn && (
+                <Link to="/wishlist" className="hidden md:block text-black hover:opacity-60 transition-opacity">
+                  <Heart size={20} strokeWidth={1.5} />
+                </Link>
+              )}
 
+              {/* Profile */}
+              {isLoggedIn ? (
+                <div className="relative" ref={profileRef}>
+                  <button onClick={() => setProfileOpen(!profileOpen)} className="text-black hover:opacity-60 transition-opacity">
+                    <User size={20} strokeWidth={1.5} />
+                  </button>
+                  {profileOpen && (
+                    <div className="absolute right-0 top-full mt-4 w-48 bg-[#e9edf2] border border-[#d2dae3] shadow-xl py-2 animate-fade-in">
+                      <Link to="/profile" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm hover:bg-[#dde1e9]">Profile</Link>
+                      <Link to="/orders" onClick={() => setProfileOpen(false)} className="block px-4 py-2 text-sm hover:bg-[#dde1e9]">Orders</Link>
+                      <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#dde1e9]">Sign Out</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link to="/login" className="text-black hover:opacity-60 transition-opacity">
+                  <User size={20} strokeWidth={1.5} />
+                </Link>
+              )}
+
+              {/* Mobile Toggle */}
+              <button onClick={() => setDrawerOpen(true)} className="md:hidden text-black">
+                <Menu size={24} strokeWidth={1.5} />
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -316,10 +221,10 @@ export default function Navbar() {
                   {isAdmin ? 'Administrator' : 'Member'}
                 </p>
               </div>
-              <Link to="/profile"  onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Profile</Link>
-              <Link to="/orders"   onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Orders</Link>
+              <Link to="/profile" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Profile</Link>
+              <Link to="/orders" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Orders</Link>
               <Link to="/wishlist" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Wishlist</Link>
-              <Link to="/cart"     onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">
+              <Link to="/cart" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">
                 Cart {cartCount > 0 && `(${cartCount})`}
               </Link>
               <button
@@ -331,10 +236,10 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/cart"  onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">
+              <Link to="/cart" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">
                 Cart {cartCount > 0 && `(${cartCount})`}
               </Link>
-              <Link to="/login"  onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Login</Link>
+              <Link to="/login" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Login</Link>
               <Link to="/signup" onClick={() => setDrawerOpen(false)} className="text-[16px] font-medium text-black hover:opacity-60">Sign Up</Link>
             </>
           )}

@@ -57,10 +57,13 @@ export default {
         },
       },
       animation: {
-        'fade-in':  'fadeIn 0.3s ease forwards',
-        'slide-in': 'slideIn 0.3s ease forwards',
-        'marquee':  'marquee 20s linear infinite',
+        'fade-in':  'fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'marquee':  'marquee 30s linear infinite',
       },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      }
     },
   },
   plugins: [],
